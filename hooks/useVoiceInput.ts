@@ -1,3 +1,4 @@
+// hooks/useVoiceInput.ts
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
@@ -6,11 +7,12 @@ export function useVoiceInput() {
   const [isListening, setIsListening] = useState(false)
   const [transcript, setTranscript] = useState('')
   const [isSupported, setIsSupported] = useState(false)
-  const recognitionRef = useRef<SpeechRecognition | null>(null)
+  const recognitionRef = useRef<any>(null) // Changed from SpeechRecognition to any
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+      // Use type assertion to access speech recognition
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
       setIsSupported(!!SpeechRecognition)
 
       if (SpeechRecognition) {
@@ -19,13 +21,15 @@ export function useVoiceInput() {
         recognition.interimResults = false
         recognition.lang = 'en-US'
 
-        recognition.onresult = (event) => {
-          const result = event.results[0][0].transcript
-          setTranscript(result)
+        recognition.onresult = (event: any) => {
+          if (event.results && event.results[0] && event.results[0][0]) {
+            const result = event.results[0][0].transcript
+            setTranscript(result)
+          }
           setIsListening(false)
         }
 
-        recognition.onerror = (event) => {
+        recognition.onerror = (event: any) => {
           console.error('Speech recognition error:', event.error)
           setIsListening(false)
         }
@@ -43,7 +47,12 @@ export function useVoiceInput() {
     if (recognitionRef.current && !isListening) {
       setTranscript('')
       setIsListening(true)
-      recognitionRef.current.start()
+      try {
+        recognitionRef.current.start()
+      } catch (error) {
+        console.error('Failed to start speech recognition:', error)
+        setIsListening(false)
+      }
     }
   }
 

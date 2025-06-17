@@ -51,10 +51,11 @@
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: hsl(var(--border));
   }
   body {
-    @apply bg-background text-foreground;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
   }
 }
 
@@ -64,11 +65,15 @@
   }
   
   .user-message {
-    @apply bg-primary text-primary-foreground ml-auto;
+    @apply ml-auto;
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
   }
   
   .bot-message {
-    @apply bg-muted text-muted-foreground mr-auto;
+    @apply mr-auto;
+    background-color: hsl(var(--muted));
+    color: hsl(var(--muted-foreground));
   }
   
   .typing-indicator {
@@ -76,7 +81,8 @@
   }
   
   .typing-dot {
-    @apply w-2 h-2 bg-muted-foreground rounded-full animate-pulse;
+    @apply w-2 h-2 rounded-full animate-pulse;
+    background-color: hsl(var(--muted-foreground));
     animation-delay: var(--delay);
   }
 }
